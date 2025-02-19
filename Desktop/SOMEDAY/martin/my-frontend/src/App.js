@@ -1,7 +1,8 @@
-// App.js
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
+
+const API_BASE_URL = "http://get-weather-utiw.onrender.com/weather/city";
 
 function App() {
   const [city, setCity] = useState("");
@@ -10,11 +11,20 @@ function App() {
   const [error, setError] = useState(null);
 
   const getWeather = async () => {
-    if (!city) return;
+    if (!city.trim()) {
+      setError("Please enter a city name.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`http://get-weather-utiw.onrender.com/weather/city/${city}/en`);
+      const response = await axios.get(`${API_BASE_URL}/${city}/en`);
+      
+      if (!response.data || !response.data.weather) {
+        throw new Error("Invalid API response.");
+      }
+
       setWeather(response.data);
     } catch (err) {
       setError("City not found or API error.");
@@ -25,11 +35,12 @@ function App() {
   };
 
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      if (city) getWeather();
-    }, 500);
-
-    return () => clearTimeout(delayDebounceFn);
+    if (city.trim()) {
+      const delayDebounceFn = setTimeout(() => {
+        getWeather();
+      }, 500);
+      return () => clearTimeout(delayDebounceFn);
+    }
   }, [city]);
 
   return (
@@ -56,17 +67,17 @@ function App() {
           <p className="condition">{weather.weather.condition} - {weather.weather.description}</p>
 
           <div className="temp-container">
-            <p>🌡️ Current: {weather.temperature.current}</p>
-            <p>🔻 Min: {weather.temperature.min}</p>
-            <p>🔺 Max: {weather.temperature.max}</p>
-            <p>🥶 Feels Like: {weather.temperature.feels_like}</p>
+            <p>🌡️ Current: {weather.temperature.current}°C</p>
+            <p>🔻 Min: {weather.temperature.min}°C</p>
+            <p>🔺 Max: {weather.temperature.max}°C</p>
+            <p>🥶 Feels Like: {weather.temperature.feels_like}°C</p>
           </div>
 
           <div className="extra-info">
-            <p>💧 Humidity: {weather.humidity}</p>
+            <p>💧 Humidity: {weather.humidity}%</p>
             <p>🌬️ Wind: {weather.wind.speed} at {weather.wind.direction}</p>
-            <p>👁️ Visibility: {weather.visibility}</p>
-            <p>📈 Pressure: {weather.pressure}</p>
+            <p>👁️ Visibility: {weather.visibility} km</p>
+            <p>📈 Pressure: {weather.pressure} hPa</p>
           </div>
 
           <div className="sun-times">
