@@ -14,7 +14,7 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`http://localhost:3000/weather/city/${city}/en`);
+      const response = await axios.get(`http://get-weather-utiw.onrender.com/weather/city/${city}/en`);
       setWeather(response.data);
     } catch (err) {
       setError("City not found or API error.");
