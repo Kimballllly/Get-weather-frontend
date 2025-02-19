@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 
-const API_BASE_URL = "https://get-weather-utiw.onrender.com/weather/city";
+const API_BASE_URL = "https://get-weather-frontend.onrender.com//weather/city";
 
 function App() {
   const [city, setCity] = useState("");
